@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Laboratório de Pronúncia</title>
+  <meta name="description" content="Diagnóstico do ambiente e teste de pronúncia ship × sheep com reconhecimento de fonemas no aparelho.">
+  <meta name="theme-color" content="#2453d4">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icones/icone-192.png">
+  <link rel="apple-touch-icon" href="icones/icone-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Charis+SIL&display=swap">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+<main>
+  <header class="topo">
+    <a class="sobretitulo" href="./">← Voltar ao app</a>
+    <h1>Laboratório de Pronúncia</h1>
+    <p class="suave">Antes de construir o app inteiro: confirmar que este aparelho grava, baixa o modelo e distingue <span class="ipa">/ɪ/</span> de <span class="ipa">/iː/</span>.</p>
+  </header>
+
+  <!-- ETAPA 0 ---------------------------------------------------------->
+  <section class="etapa" id="etapa0" aria-labelledby="t0">
+    <div class="cabecalho-etapa"><span class="etiqueta">Etapa 0</span><h2 id="t0">Verificação do ambiente</h2></div>
+    <p class="suave pequeno">O teste do microfone vai pedir permissão. Nada é simulado: cada item é testado de verdade neste navegador.</p>
+    <ul class="lista-diag">
+      <li id="d-mic"><span class="letra">a</span><span class="nome">Microfone</span><span class="det">Ainda não testado</span></li>
+      <li id="d-api"><span class="letra">b</span><span class="nome">API externa (api.groq.com)</span><span class="det">Ainda não testado</span></li>
+      <li id="d-mod"><span class="letra">c</span><span class="nome">Modelos no navegador</span><span class="det">Ainda não testado</span></li>
+      <li id="d-arm"><span class="letra">d</span><span class="nome">Armazenamento local</span><span class="det">Ainda não testado</span></li>
+    </ul>
+    <div class="linha-botoes">
+      <button class="primario" id="btn-diag">Rodar verificação</button>
+      <button id="btn-copiar-diag" disabled>Copiar relatório</button>
+    </div>
+  </section>
+
+  <!-- ETAPA 1A: modelo ------------------------------------------------->
+  <section class="etapa" id="etapa1" aria-labelledby="t1">
+    <div class="cabecalho-etapa"><span class="etiqueta">Etapa 1</span><h2 id="t1">Carregar o reconhecedor de fonemas</h2></div>
+    <p class="suave pequeno">Na primeira vez baixa cerca de <b>355 MB</b> (use Wi-Fi). Depois fica guardado no aparelho e abre offline.</p>
+    <label class="pequeno" for="sel-motor">Motor</label>
+    <select id="sel-motor"></select>
+    <div class="linha-botoes"><button class="primario" id="btn-carregar">Baixar e carregar</button></div>
+    <div class="barra" aria-hidden="true"><i id="barra"></i></div>
+    <p class="status" id="status-modelo">Modelo não carregado.</p>
+  </section>
+
+  <!-- ETAPA 1B: teste ship × sheep ------------------------------------->
+  <section class="etapa" id="teste" aria-labelledby="t2">
+    <div class="cabecalho-etapa"><span class="etiqueta">Teste</span><h2 id="t2">ship × sheep, 5 vezes cada</h2></div>
+    <p class="suave pequeno">A ordem é embaralhada para você não "viciar" na mesma palavra. Toque para gravar e diga só a palavra; para sozinho em 3 s.</p>
+
+    <div class="alvo" id="alvo" data-palavra="ship">
+      <div class="seletor-alvo" role="group" aria-label="Palavra a falar">
+        <button id="alvo-ship" aria-pressed="true">ship</button>
+        <button id="alvo-sheep" aria-pressed="false">sheep</button>
+      </div>
+      <div class="palavra" id="alvo-palavra">ship</div>
+      <div class="ipa" id="alvo-ipa">/ʃɪp/</div>
+      <p class="suave pequeno" id="alvo-dica"></p>
+      <span class="contador" id="contador">Tentativa 1 de 10</span>
+    </div>
+
+    <div class="gravar-area">
+      <button class="botao-gravar" id="btn-gravar" disabled>Gravar</button>
+      <div class="linha-botoes">
+        <button id="btn-ouvir">Ouvir modelo nativo</button>
+        <button id="btn-refazer" disabled>Refazer a última</button>
+      </div>
+      <p class="status" id="status-gravacao">Carregue o modelo para começar.</p>
+    </div>
+
+    <div class="tabela-rolagem">
+      <table>
+        <thead><tr><th>#</th><th>Alvo</th><th>Reconhecido</th><th>Vogal</th><th>Modelo ouviu</th><th></th><th>Modelo</th><th>Total</th><th>Áudio</th></tr></thead>
+        <tbody id="corpo-tabela"><tr><td colspan="9" class="suave">As tentativas aparecem aqui.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- RESUMO ---------------------------------------------------------->
+  <section class="etapa" id="resumo" aria-labelledby="t3">
+    <div class="cabecalho-etapa"><span class="etiqueta">Resumo</span><h2 id="t3">O modelo distingue os seus dois sons?</h2></div>
+    <div class="placar">
+      <div><b id="p-ship">0/0</b><span>ship reconhecido como ship</span></div>
+      <div><b id="p-sheep">0/0</b><span>sheep reconhecido como sheep</span></div>
+      <div><b id="p-tempo">–</b><span>tempo médio do modelo</span></div>
+    </div>
+    <p class="veredito" id="veredito" data-v="incompleto">Faça as 10 tentativas para ver o veredito.</p>
+    <div class="linha-botoes">
+      <button class="primario" id="btn-copiar-resumo">Copiar resultado para o Claude</button>
+      <button id="btn-zerar">Recomeçar teste</button>
+    </div>
+  </section>
+
+  <!-- CALIBRAÇÃO -->
+  <section class="etapa" aria-labelledby="t4">
+    <details>
+      <summary id="t4">Calibrar com áudio de um nativo (recomendado)</summary>
+      <div style="display:grid;gap:10px;margin-top:10px">
+        <p class="suave pequeno">Se o modelo errar, pode ser o modelo ou a sua pronúncia (é justamente o som difícil para brasileiros). Baixe a gravação nativa de "ship" e de "sheep" no Wiktionary (en.wiktionary.org/wiki/ship e /sheep, ícone de áudio) e analise aqui. Se ele acertar o nativo, o modelo é confiável.</p>
+        <input type="file" id="arquivo" accept="audio/*">
+        <div class="linha-botoes">
+          <label class="pequeno" for="arquivo-alvo">Palavra do arquivo</label>
+          <select id="arquivo-alvo"><option value="ship">ship</option><option value="sheep">sheep</option></select>
+          <button id="btn-arquivo" disabled>Analisar arquivo</button>
+        </div>
+        <p class="status" id="status-arquivo"></p>
+      </div>
+    </details>
+  </section>
+</main>
+<script type="module" src="js/laboratorio.js"></script>
+</body>
+</html>

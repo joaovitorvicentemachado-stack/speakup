@@ -1,0 +1,25 @@
+{
+  "name": "Speak Up · inglês",
+  "short_name": "Speak Up",
+  "description": "Inglês com foco em conversação e pronúncia, gratuito e rodando no seu aparelho.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#3d5afe",
+  "icons": [
+    {
+      "src": "icones/icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icones/icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
